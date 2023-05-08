@@ -104,7 +104,6 @@ class Graph:
     def DFS_path(self, node, seen = None , path = None):
         print("Finding the paths...")
         # return all the possible paths from a node
-        # v is the node
         if seen is None: 
             seen = []
         if path is None: 
@@ -234,8 +233,6 @@ def allig(list_nodes, seq1, seq2):
         long_sequence = []
         prev_i = 0
         prev_j = 0
-        
-        # [('7_6', '6_5', '5_4', '4_4', '3_3', '2_2', '1_1')]
 
         for pos in path:
             
@@ -321,7 +318,7 @@ def scoring_matrix(seq1, seq2, scores, G):
             orizontal = matrix[i+1][j] +scores["left"]
             vertical = matrix[i][j+1] + scores["up"]
 
-            # here we aer writing the scoring matrix
+            # here we are writing the scoring matrix
             matrix[i+1][j+1] = max(diagonal, vertical, orizontal, 0)
             val = matrix[i+1][j+1]
 
@@ -365,8 +362,8 @@ def scoring_matrix(seq1, seq2, scores, G):
     return  maxi_positions
 
 def Smith_Waterman(sequence1, sequence2):
+   
     #Scores = scores()
-    # bored to input
     Scores = {'match': 3, 'mis-match': -3 ,'left': -2, 'up': -2}
     Trace_Back_graph = Graph()
     Start = scoring_matrix(sequence1, sequence2, Scores, Trace_Back_graph)
