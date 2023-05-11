@@ -328,7 +328,7 @@ def scoring_matrix(seq1, seq2, scores, G):
                 maxi_positions = [(i +1, j +1)]
             if (matrix[i+1][j+1] == max_values[0]) and ((i+1,j+1) != maxi_positions[0]):
                 max_values.append(matrix[i+1][j+1])
-                maxi_positions.append((i,j))
+                maxi_positions.append((i +1,j + 1))
 
             # now we are preparing for the back tracking
             if val == diagonal :
