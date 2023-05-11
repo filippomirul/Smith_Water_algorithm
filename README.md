@@ -1,4 +1,4 @@
-## Smith_Water_algorithm
+## Smith_Waterman_algorithm
 
 Project of the course "Algorithm for Bioinformatics" of professor Blanzieri at QCB (2023).
 
