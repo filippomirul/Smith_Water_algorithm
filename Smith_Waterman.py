@@ -119,12 +119,14 @@ class Graph:
                 paths.append(tuple(t_path))
                 #print(f"paths {paths}")
                 paths.extend(self.DFS_path(t, seen[:], t_path))
+        #print(f"paths {paths}")
                 
         real = []
         for p in paths:
             for n in p:
                 if len(self.adjacentEdge(n)) == 0:
                     real.append(p)
+        #print(f"real {real}")
 
         # return a list of list, where there are in tuple all the edges
         return real
@@ -139,22 +141,23 @@ class Graph:
         S = 0
         best_path = []
         for path in paths:
-            for p in range(len(path)):
-                if p == (len(path) -1):
-                    continue
+            for p in range(len(path)-1):
+                # if p == (len(path)):
+                #     continue
                 S += self.edge_weight(path[p], path[p+1])
             if S == max_score:
                 best_path.append(path)
-                list_max_scores.append(S)
+                #list_max_scores.append(S)
             if S > max_score:
                 max_score = S
                 best_path = []
                 best_path.append(path)
                 list_max_scores = []
-                list_max_scores.append(S)
+                #list_max_scores.append(S)
             S = 0
+        #print(f"best paths {best_path}\nlist_max_scores {list_max_scores}")
         
-        return (best_path, list_max_scores)
+        return best_path
     
 def scores():
     Score = {}
@@ -206,10 +209,8 @@ def convert(pos_or_name, to_graph = True):
         Pos = [int(x) for x in pos_or_name.split("_")]
         return Pos
     
-def allig(list_nodes_and_scores, seq1, seq2):
+def allig(list_nodes, max_score, seq1, seq2):
 
-    list_nodes = list_nodes_and_scores[0]
-    list_scores = list_nodes_and_scores[1]
     seq_short = min(seq1, seq2)
     #print(seq_short)
     seq_long = max(seq1, seq2)
@@ -226,6 +227,7 @@ def allig(list_nodes_and_scores, seq1, seq2):
         for n in path:
             indices[cnt].append(convert(n, to_graph = False))
         cnt += 1
+    #print(f"indices {indices}")
         
     # return something like [ [ [j ,i  ] , [j,i ] ..] , [ [j,i ] , [j,i ] ] ...]
     all_allig = []
@@ -237,13 +239,13 @@ def allig(list_nodes_and_scores, seq1, seq2):
         prev_i = 0
         prev_j = 0
         
-        # [('7_6', '6_5', '5_4', '4_4', '3_3', '2_2', '1_1')]
+        # [[10, 14], [9, 13], [8, 12], [8, 11],..] 
 
         for pos in path:
             
             i = pos[0] -1
             j = pos[1] -1
-            if i == 0 or j == 0:
+            if i < 0 or j < 0:
                 continue
             if i == prev_i:
                 #print(f"before pop short {short_sequence}")
@@ -280,12 +282,11 @@ def allig(list_nodes_and_scores, seq1, seq2):
                 #   print(f"sequence {all_allig[cnt][j]}")
                 true_val[cnt].append("".join(all_allig[cnt][j]))
         cnt += 1 
-    cnt = 0
+    print("\n")
     for i in true_val:
         for j in i:
             print(j)
-        print(f"Score of the allignment: {list_scores[cnt]}")
-        cnt += 1
+        print(f"Score of the allignment: {max_score}")
         print("\n\n")
                        
     return 
@@ -309,7 +310,7 @@ def scoring_matrix(seq1, seq2, scores, G):
     max_values = [0]
     maxi_positions = [0]
     # position are y-x coordinates
-    cnt = 0
+    
     for i in range(len_min):
         
         for j in range(len_max):
@@ -338,59 +339,62 @@ def scoring_matrix(seq1, seq2, scores, G):
                 maxi_positions.append((i +1,j +1))
 
             # now we are preparing for the back tracking
-            if val == diagonal :
-                new_direct(G, i, j, scores,match = Match)
+            if val != 0:
+                if val == diagonal :
+                    new_direct(G, i, j, scores,match = Match)
 
-            if val == orizontal :
-                new_direct(G, i, j, scores,direction = "left")
+                if val == orizontal :
+                    new_direct(G, i, j, scores, direction = "left")
 
-            if val == vertical :
-                new_direct(G, i, j, scores, direction = "up")
-                
-            if (val == diagonal) and (val == orizontal) : 
-                new_direct(G, i, j, scores, match = Match)
-                new_direct(G, i, j, scores, direction = "left")
+                if val == vertical :
+                    new_direct(G, i, j, scores, direction = "up")
+                    
+                if (val == diagonal) and (val == orizontal) : 
+                    new_direct(G, i, j, scores, match = Match)
+                    new_direct(G, i, j, scores, direction = "left")
 
-            if (val == diagonal) and (val == vertical) :
-                new_direct(G, i, j,scores, match= Match)
-                new_direct(G, i, j, scores,direction = "up")
+                if (val == diagonal) and (val == vertical) :
+                    new_direct(G, i, j,scores, match= Match)
+                    new_direct(G, i, j, scores,direction = "up")
 
-            if (val == orizontal) and (val == vertical):
-                new_direct(G, i, j, scores, direction = "up")
-                new_direct(G, i, j, scores, match = Match)
+                if (val == orizontal) and (val == vertical):
+                    new_direct(G, i, j, scores, direction = "up")
+                    new_direct(G, i, j, scores, direction="left")
 
-            if (val == diagonal) and (val == orizontal) and ( val == vertical):
-                new_direct(G, i, j,scores, match = Match)
-                new_direct(G, i, j, scores,direction = "up")
-                new_direct(G, i , j, scores,direction = "left")
-            cnt += 1
+                if (val == diagonal) and (val == orizontal) and ( val == vertical):
+                    new_direct(G, i, j,scores, match = Match)
+                    new_direct(G, i, j, scores,direction = "up")
+                    new_direct(G, i , j, scores,direction = "left")
+
         #  print(f"Procedure at: {(cnt/perc_tot)*100:.3f}%")
     print(matrix)
     print(maxi_positions)
-    print(max_values)
+    #print(max_values)
     print("Done structuring the scoring matrix and created the graph")
     #   return the graph and the list with tha maximum positions in a tuple
-    return  maxi_positions
+    return  (maxi_positions, max_values[0])
 
 def Smith_Waterman(sequence1, sequence2):
     #Scores = scores()
     # bored to input
     Scores = {'match': 2, 'mis-match': -1 ,'left': -1, 'up': -1}
     Trace_Back_graph = Graph()
-    Start = scoring_matrix(sequence1, sequence2, Scores, Trace_Back_graph)
+    temp = scoring_matrix(sequence1, sequence2, Scores, Trace_Back_graph)
+    Start = temp[0]
+    score_max = temp[1]
     starting_nodes = []    
     for s in Start:
         starting_nodes.append(convert(s))
     for node in starting_nodes:
         paths = Trace_Back_graph.DFS_path(node) # return all the paths from the starting node 
         bests_paths = Trace_Back_graph.f_max_score(paths) # return only the paths with maximum score
-        allig(bests_paths, sequence1, sequence2)
+        allig(bests_paths, score_max, sequence1, sequence2)
         
     return 
 
 #### TEST ####
 
-seq1 = "TGTTACGGTTATAGCTGTAGCT"
-seq2 = "GGTTCACGCTTCATC"
+seq1 = "TAGCTGTATATATCT"
+seq2 = "GTGTATATGC"
 
 Smith_Waterman(seq1, seq2)
