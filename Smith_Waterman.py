@@ -239,7 +239,6 @@ def allig(list_nodes, max_score, seq1, seq2):
         prev_i = 0
         prev_j = 0
         
-        # [[10, 14], [9, 13], [8, 12], [8, 11],..] 
 
         for pos in path:
             
@@ -286,7 +285,7 @@ def allig(list_nodes, max_score, seq1, seq2):
     for i in true_val:
         for j in i:
             print(j)
-        print(f"Score of the allignment: {max_score}")
+        print("Score of the allignment: {}".format(max_score))
         print("\n\n")
                        
     return 
@@ -366,18 +365,15 @@ def scoring_matrix(seq1, seq2, scores, G):
                     new_direct(G, i, j, scores,direction = "up")
                     new_direct(G, i , j, scores,direction = "left")
 
-        #  print(f"Procedure at: {(cnt/perc_tot)*100:.3f}%")
-    print(matrix)
-    print(maxi_positions)
+    print("The scoring matrix:\n{}".format(matrix))
+    #print(maxi_positions)
     #print(max_values)
     print("Done structuring the scoring matrix and created the graph")
-    #   return the graph and the list with tha maximum positions in a tuple
+    #return the graph and the list with tha maximum positions in a tuple
     return  (maxi_positions, max_values[0])
 
 def Smith_Waterman(sequence1, sequence2):
-    #Scores = scores()
-    # bored to input
-    Scores = {'match': 2, 'mis-match': -1 ,'left': -1, 'up': -1}
+    Scores = scores()
     Trace_Back_graph = Graph()
     temp = scoring_matrix(sequence1, sequence2, Scores, Trace_Back_graph)
     Start = temp[0]
@@ -392,9 +388,11 @@ def Smith_Waterman(sequence1, sequence2):
         
     return 
 
-#### TEST ####
 
-seq1 = "TAGCTGTATATATCT"
-seq2 = "GTGTATATGC"
+print("Please insert a sequence:\n")
+seq1 = str(input()).upper()
+print("Please insert a second sequence:\n")
+seq2 = str(input()).upper()
+
 
 Smith_Waterman(seq1, seq2)
